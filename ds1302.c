@@ -35,12 +35,43 @@ int gpio_action(char *add,char date,int W_R)
 	//setting finish
 
 	//setting the value of ce into 1, enable the devices
+	char ce[2]="1";
 	printf("setting ce value = 1 enable device of DS1302");
 	sprintf(ce_add_str,"/sys/class/gpio%s/value",ce_str);
-	ce_dir = open(
+	ce_dir = open(ce_add_str,O_WRONLY);
+	write(ce_dir,ce,2);
+	close(ce_dir);
+	//setting finish
+}
 
+int date_write_single(char date)
+{
+	//write address
+	char date[2];
+	char clk[2];
 
+	sprintf(clk,"1");
+	sprintf(date,"%c",date);
 
+	sprintf(clk_add_str,"/sys/class/gpio%s/value",clk_str);
+	sprintf(date_add_str,"/sys/class/gpio%s/value",clk_str);
+	
+	date_dir = open (date_add_str,O_WRONLY);
+	clk_dir = open(clk_add_str,O_WRONLY);
+
+	write(date_dir,date,2);
+	close(date_dir);
+	usleep(20);
+	write(clk_dir,clk,2);
+	close(clk_dir);
+	usleep(20);
+	clk_dir = open(clk_add_str,O_WRONLY);
+	sprintf(clk,"0");
+	write(clk_dir,clk,2);
+	close(clk_dir);
+	
+	return 0;
+}
 	
 int bin_int_tran(char *binary,int num_bit)
 {
