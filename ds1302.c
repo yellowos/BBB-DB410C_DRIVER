@@ -5,21 +5,56 @@
 #include "sys/types.h"
 #include "math.h"
 
+
 #define BT_CONF "./ds1302.conf" 
 #define DATE_WR_FILE "./time_output"
 #define GPIO_DIR "/sys/class/gpio/"
+#define WR_ADD 0X80
+#define RD_ADD 0X81
+
 
 char time[16];
-char *p_time;
-int time(char *,int command)
+//the type of time is ss:mm:dd#mm:yyyy
+
+
+int time(char *time,int add,char class)
 {
+	char add_hex;
+	char *add_bin_buf;
+	char *time_bin_buf:
+	add_bin_buf = malloc(20);
+	time_bin_buf = malloc(20);
+	int i = 0;
+	int j = 0;
+	//char time_bin_buf[20];
+	//char add_bin_buf[20]={"1000"};
+	//int add_i;
+	//int time_i;
+	
+	*add_bin_buf = '1';
+	*(add_bin_buf+1) = '0';
+	*(add_bin_buf+2) = '0';
+	*(add_bin_buf+3) = '0';
+	
+	while(add <=  0X8F)
+	{
+		//write address
+		sprintf(add_bin_buf+4,"%d",hex_bin_tran(add));
+		while(i <= 7)
+		{
+			if(0 != date_write_single(*(add_bin_buf+i)))
+			{
+				printf("write error error message :\n");
+				printf("error address is %d bit %d",add,i);
+			}
+		}
+
+		//write or read date 
+		//remember to change the define of point and array
 	
 
-int time_m()
-int time_h()
-int time_day()
-int time_month()
-int time_year()
+
+
 
 int gpio_action(char *add,char date,int W_R)
 {
@@ -43,6 +78,38 @@ int gpio_action(char *add,char date,int W_R)
 	close(ce_dir);
 	//setting finish
 }
+
+char date_read_single(void)
+{
+
+	//read address
+	char date[2];
+	char clk[2];
+
+	sprintf(clk,"1");
+
+	sprintf(clk_add_str,"/sys/class/gpio%s/value",clk_str);
+	sprintf(date_add_str,"/sys/class/gpio%s/value",clk_str);
+	
+	date_dir = open (date_add_str,O_RDONLY);
+	clk_dir = open(clk_add_str,O_WRONLY);
+
+	read(date_dir,date);
+	close(date_dir);
+	usleep(20);
+	write(clk_dir,clk,2);
+	close(clk_dir);
+	usleep(20);
+	clk_dir = open(clk_add_str,O_WRONLY);
+	sprintf(clk,"0");
+	write(clk_dir,clk,2);
+	close(clk_dir);
+	
+	return date[0];
+
+}
+	
+
 
 int date_write_single(char date)
 {
