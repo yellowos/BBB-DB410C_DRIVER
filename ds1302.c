@@ -47,22 +47,29 @@ int time(char *time,int add,char class)
 				printf("write error error message :\n");
 				printf("error address is %d bit %d",add,i);
 			}
+			i=i+1;
+
 		}
 
 		//write or read date 
 		//remember to change the define of point and array
-	
+		while(j <= 7)
+		{
+			*(time_bin_buf+j) = date_read_single();
+			j = j+1;
+		}
+		sprintf(time_bin_buf,"%d",
 
 
 
 
-int gpio_action(char *add,char date,int W_R)
+int ce_action(char *add,char date,int W_R)
 {
 	int ce_dir;
 	const char ce_direction[4]="out";
 	//setting direction of ce
 	printf("setting direction of gpio ce\n");
-	sprintf(ce_add_str,"/sys/class/gpio/gpio%s/direction",ce_str);
+	//sprintf(ce_add_str,"/sys/class/gpio/gpio%s/direction",ce_str);
 	ce_dir = open(ce_add_str,O_WRONLY);
 	write(ce_dir,ce_direction,4);
 	close(ce_dir);
@@ -72,7 +79,7 @@ int gpio_action(char *add,char date,int W_R)
 	//setting the value of ce into 1, enable the devices
 	char ce[2]="1";
 	printf("setting ce value = 1 enable device of DS1302");
-	sprintf(ce_add_str,"/sys/class/gpio%s/value",ce_str);
+	//sprintf(ce_add_str,"/sys/class/gpio%s/value",ce_str);
 	ce_dir = open(ce_add_str,O_WRONLY);
 	write(ce_dir,ce,2);
 	close(ce_dir);
@@ -82,14 +89,14 @@ int gpio_action(char *add,char date,int W_R)
 char date_read_single(void)
 {
 
-	//read address
+	//write address
 	char date[2];
 	char clk[2];
 
 	sprintf(clk,"1");
 
-	sprintf(clk_add_str,"/sys/class/gpio%s/value",clk_str);
-	sprintf(date_add_str,"/sys/class/gpio%s/value",clk_str);
+	//sprintf(clk_add_str,"/sys/class/gpio%s/value",clk_str);
+	//sprintf(date_add_str,"/sys/class/gpio%s/value",clk_str);
 	
 	date_dir = open (date_add_str,O_RDONLY);
 	clk_dir = open(clk_add_str,O_WRONLY);
